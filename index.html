@@ -1,167 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<style type="text/css">
-  h1 {
-	  font-family: Arial, Helvetica, sans-serif;
-	  color: #F00;
-	  font-size: x-large;
-  }
-  p {
-	  font-family: Arial, Helvetica, sans-serif;
-	  color: #000;
-	  font-size: small;
-  }
-  body {
-	  background-color: #FFF;
+  <style type="text/css">
+    h1 {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #f00;
+      font-size: x-large;
+    }
+    p {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #000;
+      font-size: small;
+    }
+    body {
+      background-color: #1d1d1d;
       text-align: center;
       margin: 0;
       padding: 0;
-  }
-  #bloctxt {
-	  border-left-width: 5px;
-	  border-left-style: solid;
-	  border-left-color: #F00;
-	  padding-left: 10px;
-	  position: absolute;
-	  left: 50%;
-	  width: 600px;
-	  margin-left: -260px
-  }
-</style>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    }
+    #bloctxt {
+      border-left-width: 5px;
+      border-left-style: solid;
+      border-left-color: #f00;
+      padding-left: 10px;
+      position: absolute;
+      left: 50%;
+      width: 600px;
+      margin-left: -260px;
+    }
+  </style>
+  <head> 
+ <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-  <meta name="HandheldFriendly" content="true" />
+    <!-- Enables full-screen on iOS devices -->
+    <meta
+      name="viewport"
+      content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="HandheldFriendly" content="true" />
 
-  <title>Clickteam Fusion Developer 2.5 HTML5 Runtime</title>
-
-	<script>
-	   	// Detection of old browsers that do not support the canvas element
-		// Falls back to a default page
-	    if (!document.createElement("canvas").getContext)
-	    {
-			window.open("http://www.clickteam.com/html5-fallback", "_self");
-		}
-	</script>
-
-
-  	<script src="src/Runtime.js"></script>
+    <title>Five Nights at Freddy's 1.</title>
 
     <script>
-
-	// Detection of when the html file is ran locally.
-	// You can remove this code for the final version
-	if (window.location.protocol == "file:")
-	{
-		document.write('<div id="bloctxt">');
-		document.write('<h1>The application cannot be run...</h1>');
-		document.write('<p>HTML browsers do not allow you to launch data files directly from the file system.<br>');
-		document.write('A drag & drop of the html file on a web-browser window will not work, on any machine.<br>');
-		document.write('Please use the Build & Run option (it opens a local web server) to run your application,<br>')
-		document.write('or upload your application folder to a remote web-server, and start it from there...</p>');
-		document.write('</div>');
-		throw new Error("Cannot run application");
-	}
-
+      // Detection of old browsers that do not support the canvas element
+      // Falls back to a default page
+      if (!document.createElement("canvas").getContext) {
+        window.open("http://www.clickteam.com/html5-fallback", "_self");
+      }
     </script>
-</head>
 
-<body>
-
-<div style="display: inline-block; -webkit-user-select: none; text-align: left;">
-    <canvas id="MMFCanvas" width="1280" height="720">
-    	Your browser does not support Canvas.
-    </canvas>
-</div>
-
+    <!-- EXTRASOURCES -->
+    <!-- Loads the Javascript code...-->
+    <script src="src/Runtime.js"></script>
 
     <script>
-        // RUNTIMESTART
-        // This is where the HTML5 runtime is actually started
-        window.addEventListener("load", windowLoaded, false);
-
-        let gamepadInterval;
-
-        function windowLoaded()
-        {
-            // Calls the runtime
-            // First parameter : name of the canvas element
-            // Second parameter : path to the cch file. Images and sounds must lay beside this file
-            new Runtime("MMFCanvas", "resources/FNAF1HTML5.cch");
-
-            // Gamepad API integration
-            window.addEventListener("gamepadconnected", (e) => {
-                console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
-                    e.gamepad.index, e.gamepad.id,
-                    e.gamepad.buttons.length, e.gamepad.axes.length);
-                startGamepadPolling();
-            });
-
-            window.addEventListener("gamepaddisconnected", (e) => {
-                console.log("Gamepad disconnected from index %d: %s",
-                    e.gamepad.index, e.gamepad.id);
-                stopGamepadPolling();
-            });
-
-            // Check for already connected gamepads on load
-            const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
-            if (gamepads.length > 0 && gamepads[0] !== null) {
-                console.log("Gamepad already connected on load.");
-                startGamepadPolling();
-            }
-        }
-
-        function startGamepadPolling() {
-            if (!gamepadInterval) {
-                gamepadInterval = setInterval(pollGamepads, 1000 / 60); // Poll at 60 FPS
-            }
-        }
-
-        function stopGamepadPolling() {
-            if (gamepadInterval) {
-                clearInterval(gamepadInterval);
-                gamepadInterval = null;
-            }
-        }
-
-        function pollGamepads() {
-            const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
-            for (let i = 0; i < gamepads.length; i++) {
-                const gp = gamepads[i];
-                if (gp) {
-                    // console.log(`Gamepad ${gp.index} (${gp.id}):`);
-
-                    // Check buttons
-                    for (let b = 0; b < gp.buttons.length; b++) {
-                        if (gp.buttons[b].pressed) {
-                            // console.log(`  Button ${b} pressed`);
-                            // *** Here you would ideally send input to your Clickteam Fusion game ***
-                            // This part is highly dependent on how Clickteam Fusion's HTML5 runtime
-                            // allows external JavaScript to trigger in-game events or control objects.
-                            // You might look for functions exposed by the Runtime.js, or
-                            // if there's a way to simulate keyboard/mouse events within the canvas.
-                            // Example (conceptual):
-                            // myGameRuntime.triggerButtonPress(b);
-                        }
-                    }
-
-                    // Check axes (joysticks)
-                    for (let a = 0; a < gp.axes.length; a++) {
-                        if (Math.abs(gp.axes[a]) > 0.1) { // Add a small dead zone
-                            // console.log(`  Axis ${a}: ${gp.axes[a].toFixed(2)}`);
-                            // *** Similar to buttons, send axis data to the game ***
-                            // myGameRuntime.setAxisValue(a, gp.axes[a]);
-                        }
-                    }
-                }
-            }
-        }
-        // RUNTIMESTARTEND
+      // Detection of when the html file is ran locally.
+      // You can remove this code for the final version
+      if (window.location.protocol == "file:") {
+        document.write('<div id="bloctxt">');
+        document.write("<h1>The application cannot be run...</h1>");
+        document.write(
+          "<p>HTML browsers do not allow you to launch data files directly from the file system.<br>"
+        );
+        document.write(
+          "A drag & drop of the html file on a web-browser window will not work, on any machine.<br>"
+        );
+        document.write(
+          "Please use the Build & Run option (it opens a local web server) to run your application,<br>"
+        );
+        document.write(
+          "or upload your application folder to a remote web-server, and start it from there...</p>"
+        );
+        document.write("</div>");
+        throw new error("Cannot run application... Maybe Refresh Or Something?");
+      }
     </script>
+  </head>
 
-</body>
+  <body>
+    <div
+      style="display: inline-block; -webkit-user-select: none; text-align: left"
+    >
+      <canvas id="MMFCanvas" width="1280" height="720">
+        Your browser does not support Canvas, Please try again.
+      </canvas>
+    </div>
+
+    <script>
+      // RUNTIMESTART
+      // This is where the HTML5 runtime is actually started
+      window.addEventListener("load", windowLoaded, false);
+      function windowLoaded() {
+        // Calls the runtime
+        // First parameter : name of the canvas element
+        // Second parameter : path to the cch file. Images and sounds must lay beside this file
+        new Runtime("MMFCanvas", "resources/FNAF1HTML5.cch");
+      }
+      // RUNTIMESTARTEND
+    </script>
+   </body>
 </html>
